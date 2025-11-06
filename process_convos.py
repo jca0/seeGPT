@@ -70,7 +70,7 @@ def embed_msgs(msgs, batch_size=BATCH_SIZE, embedding_model=EMBEDDING_MODEL, out
             print(f"Error embedding batch {i}: {e}")
             return
     
-    np.save(output_file, embeddings)
+    np.save(output_folder / output_file, embeddings)
     print(f"Saved embeddings to {output_folder / output_file}")
     return embeddings
 
