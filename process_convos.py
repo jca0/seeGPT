@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import tiktoken
 import os
 import numpy as np
-from pathlib import Path
 
 load_dotenv()
 
@@ -35,6 +34,12 @@ def get_all_user_msgs(convo):
     all_user_msgs = []
     for convo in tqdm(conversations, desc="Processing conversations"):
         all_user_msgs.extend(get_msg(convo))
+    
+    # save all_user_msgs to a json file
+    with open('all_user_msgs.json', 'w') as f:
+        json.dump(all_user_msgs, f)
+    print(f"Saved all_user_msgs to all_user_msgs.json")
+
     return all_user_msgs
 
 def clean_msgs(msgs, max_length=MAX_CONTEXT_LENGTH, embedding_model=EMBEDDING_MODEL):
@@ -66,6 +71,8 @@ def embed_msgs(msgs, batch_size=BATCH_SIZE, embedding_model=EMBEDDING_MODEL, out
     print(f"Saved embeddings to {output_file}")
     return embeddings
 
-all_user_msgs = get_all_user_msgs(conversations)
-cleaned_msgs = clean_msgs(all_user_msgs)
-embedded_msgs = embed_msgs(cleaned_msgs)
+
+if __name__ == "__main__":
+    all_user_msgs = get_all_user_msgs(conversations)
+    cleaned_msgs = clean_msgs(all_user_msgs)
+    embedded_msgs = embed_msgs(cleaned_msgs)
