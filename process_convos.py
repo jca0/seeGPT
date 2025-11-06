@@ -5,19 +5,22 @@ from dotenv import load_dotenv
 import tiktoken
 import os
 import numpy as np
+from pathlib import Path
 
 load_dotenv()
 
 MAX_CONTEXT_LENGTH = 8192
 EMBEDDING_MODEL = "text-embedding-3-small"
 BATCH_SIZE = 50 # set to 35 for worst case
+output_folder = Path("user_data")
+output_folder.mkdir(parents=True, exist_ok=True)
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 with open('conversations.json', 'r') as f:
     conversations = json.load(f)
 
-def get_all_user_msgs(convo):
+def get_all_user_msgs(convo, output_file='all_user_msgs.json'):
     """
     gets all user messages from a conversation.json file
     """
@@ -36,9 +39,9 @@ def get_all_user_msgs(convo):
         all_user_msgs.extend(get_msg(convo))
     
     # save all_user_msgs to a json file
-    with open('all_user_msgs.json', 'w') as f:
+    with open(output_folder / output_file, 'w') as f:
         json.dump(all_user_msgs, f)
-    print(f"Saved all_user_msgs to all_user_msgs.json")
+    print(f"Saved all_user_msgs to {output_folder / output_file}")
 
     return all_user_msgs
 
@@ -68,7 +71,7 @@ def embed_msgs(msgs, batch_size=BATCH_SIZE, embedding_model=EMBEDDING_MODEL, out
             return
     
     np.save(output_file, embeddings)
-    print(f"Saved embeddings to {output_file}")
+    print(f"Saved embeddings to {output_folder / output_file}")
     return embeddings
 
 
